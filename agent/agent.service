@@ -1,0 +1,11 @@
+[Unit]
+Description=System Metrics Agent
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/python3 /home/auser/agent.py
+Restart=always
+User=auser
+
+[Install]
+WantedBy=multi-user.target
