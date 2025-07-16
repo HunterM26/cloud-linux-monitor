@@ -1,66 +1,89 @@
 # Cloud-Based Linux Server Performance Monitor
 
-**Course:** COP3604 – System Administration Using Unix  
-**Student:** Hunter Mathews  
-**Instructor:** Professor Navarro  
-**Project Type:** Solo
+**Course**: COP3604 – System Administration Using Unix  
+**Student**: Hunter Mathews  
+**Instructor**: Professor Navarro  
+**Project Type**: Solo
+
+---
 
 ## Overview
 
-This project is a custom monitoring solution for a remote Linux server hosted on Google Cloud. It simulates server load using `stress-ng`, collects key system metrics with a custom Python agent, and sends them through a named pipe. A GUI dashboard will eventually display the data in real-time and alert users if performance thresholds are crossed.
+This project is a custom-built monitoring system for a remote Linux server hosted on Google Cloud. It uses `stress-ng` to simulate system load and a Python-based agent to collect performance metrics. These metrics are passed through a named pipe and will be visualized using a real-time web-based GUI (Plotly Dash). Alerts will notify the user when performance crosses user-defined thresholds.
+
+---
 
 ## What’s Working So Far
 
-- Cloud VM set up and running Ubuntu 22.04 on Google Cloud
-- `stress-ng` load simulation targeting:
+- Google Cloud VM running Ubuntu 22.04
+- Simulated load using `stress-ng`, targeting:
   - CPU
   - Memory
   - Disk
   - I/O
   - Matrix operations
-- `agent.py` collects:
+- `agent.py` script collects:
   - CPU usage
   - RAM usage
   - Disk usage
   - Network usage
   - Load average
-- Agent writes output to `/tmp/sysmetrics.pipe` (named pipe)
-- Agent runs as a systemd service under a dedicated user (`auser`)
-- Agent restarts automatically on failure
-- Project organized with Git and pushed to GitHub
+- Agent writes formatted output to `/tmp/sysmetrics.pipe` (named pipe)
+- Agent runs as a `systemd` service under a dedicated user (`auser`)
+- Agent auto-restarts on failure via `systemd`
+- `stress.sh` script runs automated `stress-ng` tests in a loop
+- `stress.sh` is configured as a `systemd` service
+- Git repo initialized and actively used for version control
+
+---
 
 ## Still in Progress
 
-- Cron job to restart the agent if it fails
-- GUI dashboard (Tkinter or Plotly) to visualize real-time data
-- Historical tracking and basic alert system (color or popup)
-- Multi-server dashboard support
-- Threshold settings UI
-- API/IP restriction via firewall or VPC config
+- Cron job to ensure agent restarts if it fails unexpectedly
+- Web-based dashboard using Plotly Dash for live data visualization
+- Historical metric tracking
+- Threshold alert system (color changes or popups)
+- Ability to select and monitor multiple servers
+- Adjustable threshold settings through the dashboard
+- Restrict dashboard access by IP using firewall/VPC rules
+
+---
 
 ## Project Folder Structure
-
 cloud-linux-monitor/
-  agent/
-    agent.py
-    agent.service
-  stress/
-    stress.sh
-  dashboard/
-    dashboard.py
-  README.md
+├── agent/
+│ ├── agent.py
+│ └── agent.service
+├── stress/
+│ └── stress.sh
+├── dashboard/
+│ └── dashboard.py
+└── README.md
+
+---
 
 ## How to Use It
 
-Start the monitoring agent:  
-  sudo systemctl start agent.service
+### Start the monitoring agent:
+sudo systemctl start agent.service
 
-Check if it’s running:  
-  sudo systemctl status agent.service
+### Check that agent is running
+sudo systemctl status agent.service
 
-View real-time system metrics:  
-  cat /tmp/sysmetrics.pipe
+### View live system metrics from pipe
+cat /tmp/stsmetrics.pipe
+
+### Start stress generator 
+sudo systemctl start stress.service
+
+### Check if stress script is running
+sudo systemctl status stress.service
+
+### Run dashboard
+
+
+---
 
 ## Notes
-
-Development is ongoing. The project currently meets several of the main requirements, with additional dashboard and automation features being built ahead of the in-class review.
+7/16/2025 
+    The backend is complete and working, working on web-based GUI for monitoring functionalilty (currently have the code working, working on web-based format)
