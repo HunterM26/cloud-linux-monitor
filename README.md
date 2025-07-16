@@ -50,16 +50,17 @@ This project is a custom-built monitoring system for a remote Linux server hoste
 ---
 
 ## Project Folder Structure
-cloud-linux-monitor/
-├── agent/
-│ ├── agent.py
-│ └── agent.service
-├── stress/
-│ └── stress.sh
-├── dashboard/
-│ └── dashboard.py
-└── README.md
 
+cloud-linux-monitor/
+  agent/
+    agent.py
+    agent.service
+  stress/
+    stress.sh
+  dashboard/
+    dashboard.py
+  README.md
+  
 ---
 
 ## How to Use It
