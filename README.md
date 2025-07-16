@@ -51,15 +51,15 @@ This project is a custom-built monitoring system for a remote Linux server hoste
 
 ## Project Folder Structure
 
-cloud-linux-monitor/
-  agent/
-    agent.py
-    agent.service
-  stress/
-    stress.sh
-  dashboard/
-    dashboard.py
-  README.md
+-cloud-linux-monitor/
+  -agent/
+    -agent.py
+    -agent.service
+  -stress/
+    -stress.sh
+  -dashboard/
+    -dashboard.py
+  -README.md
   
 ---
 
@@ -72,7 +72,7 @@ sudo systemctl start agent.service
 sudo systemctl status agent.service
 
 ### View live system metrics from pipe
-cat /tmp/stsmetrics.pipe
+cat /tmp/sysmetrics.pipe
 
 ### Start stress generator 
 sudo systemctl start stress.service
