@@ -68,8 +68,10 @@ Copy code
 Copy code
 
     python3 agent/agent.py
-    4. Run the Dashboard
-    In a separate terminal:
+    
+4. Run the Dashboard
+
+In a separate terminal:
 
 Copy code
 
