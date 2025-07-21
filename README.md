@@ -12,7 +12,7 @@ This project is a full-stack cloud-based system performance monitoring tool. It 
 - All-Metrics View or Individual View: Choose to monitor all metrics or just one from a dropdown.
 - Stress Generator: Systemd service with `stress-ng` simulates system load (CPU, disk, memory).
 - Custom Agent: Python script writes metrics to a named pipe for secure transfer.
-- Secure SSH Tunnel: Port forwarding for local access to remote dashboard.
+- Secure SSH Tunnel: Port forwarding for local access to the remote dashboard.
 - Firewall Support: Configurable to allow only necessary ports.
 - Fully Hosted on Google Cloud VM: Built and deployed on a Debian-based Google Cloud instance.
 
@@ -36,28 +36,27 @@ This project is a full-stack cloud-based system performance monitoring tool. It 
 ### 1. SSH & Firewall
 
 - Generate your SSH key and copy it to the VM:
-  
-      '''bash
+
       ssh-keygen -t ed25519 -C "gcp-ssh"
       ssh-copy-id -i ~/.ssh/your_key.pub humerthingy@<EXTERNAL_IP>
       
 -Create a secure tunnel to access the dashboard:
 
-    bash
-    Copy code
+Copy code
+    
     ssh -i ~/.ssh/your_key -L 8050:localhost:8050 humerthingy@<EXTERNAL_IP>
     (Optional) Enable UFW:
 
-    bash
-    Copy code
+Copy code
+
     sudo ufw allow OpenSSH
     sudo ufw allow 8050
     sudo ufw enable
     
 ###2. Install Requirements
 
-    bash
-    Copy code
+Copy code
+
     sudo apt update
     sudo apt install python3 python3-pip stress-ng
     pip3 install dash plotly psutil
@@ -66,14 +65,14 @@ This project is a full-stack cloud-based system performance monitoring tool. It 
 
 -Run the Python agent to continuously write metrics:
 
-    bash
-    Copy code
+Copy code
+
     python3 agent/agent.py
     4. Run the Dashboard
     In a separate terminal:
 
-    bash
-    Copy code
+Copy code
+
     python3 dashboard/dashboard.py
     Then open http://localhost:8050 in your browser.
 
@@ -81,17 +80,18 @@ This project is a full-stack cloud-based system performance monitoring tool. It 
 
 -Enable the systemd service to simulate stress:
 
-    bash
-    Copy code
+Copy code
+    
     sudo cp stress/stress.service /etc/systemd/system/
     sudo systemctl daemon-reexec
     sudo systemctl daemon-reload
     sudo systemctl enable stress.service
     sudo systemctl start stress.service
-    To check status:
     
-    bash
-    Copy code
+To check status:
+    
+Copy code
+
     sudo systemctl status stress.service
     
 ###Notes
