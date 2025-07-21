@@ -1,90 +1,103 @@
-# Cloud-Based Linux Server Performance Monitor
-
-**Course**: COP3604 – System Administration Using Unix  
-**Student**: Hunter Mathews  
-**Instructor**: Professor Navarro  
-**Project Type**: Solo
-
----
+# Cloud-Based Linux Server Performance Remote Dashboard
 
 ## Overview
 
-This project is a custom-built monitoring system for a remote Linux server hosted on Google Cloud. It uses `stress-ng` to simulate system load and a Python-based agent to collect performance metrics. These metrics are passed through a named pipe and will be visualized using a real-time web-based GUI (Plotly Dash). Alerts will notify the user when performance crosses user-defined thresholds.
+This project is a full-stack cloud-based system performance monitoring tool. It uses a lightweight custom agent on a remote Linux server to collect live metrics and display them in a dynamic web dashboard built with Dash and Plotly. The system supports real-time monitoring, stress testing, adjustable thresholds, and visual alerts.
 
----
+## Features
 
-## What’s Working So Far
+- Live Monitoring Dashboard: Displays CPU, memory, disk, network, and load usage in real-time.
+- Dynamic Threshold Sliders: Users can set metric thresholds directly from the dashboard interface.
+- Visual Alerts: Red dashed threshold lines and visual indicators when thresholds are exceeded.
+- All-Metrics View or Individual View: Choose to monitor all metrics or just one from a dropdown.
+- Stress Generator: Systemd service with `stress-ng` simulates system load (CPU, disk, memory).
+- Custom Agent: Python script writes metrics to a named pipe for secure transfer.
+- Secure SSH Tunnel: Port forwarding for local access to remote dashboard.
+- Firewall Support: Configurable to allow only necessary ports.
+- Fully Hosted on Google Cloud VM: Built and deployed on a Debian-based Google Cloud instance.
 
-- Google Cloud VM running Ubuntu 22.04
-- Simulated load using `stress-ng`, targeting:
-  - CPU
-  - Memory
-  - Disk
-  - I/O
-  - Matrix operations
-- `agent.py` script collects:
-  - CPU usage
-  - RAM usage
-  - Disk usage
-  - Network usage
-  - Load average
-- Agent writes formatted output to `/tmp/sysmetrics.pipe` (named pipe)
-- Agent runs as a `systemd` service under a dedicated user (`auser`)
-- Agent auto-restarts on failure via `systemd`
-- `stress.sh` script runs automated `stress-ng` tests in a loop
-- `stress.sh` is configured as a `systemd` service
-- Git repo initialized and actively used for version control
+## Project Structure
 
----
+    cloud-linux-monitor/
+    ├── agent/
+    │ └── agent.py # Python script to read system metrics and write to named pipe
+    ├── dashboard/
+    │ └── dashboard.py # Dash/Plotly web interface for real-time monitoring
+    ├── stress/
+    │ ├── stress.sh # Bash script for stress testing CPU, memory, and disk
+    │ └── stress.service # systemd service file for stress.sh
+    ├── setup/
+    │ └── firewall.sh # (Optional) UFW setup script
+    ├── .gitignore
+    └── README.md
 
-## Still in Progress
+## Setup Instructions
 
-- Cron job to ensure agent restarts if it fails unexpectedly
-- Web-based dashboard using Plotly Dash for live data visualization
-- Historical metric tracking
-- Threshold alert system (color changes or popups)
-- Ability to select and monitor multiple servers
-- Adjustable threshold settings through the dashboard
-- Restrict dashboard access by IP using firewall/VPC rules
+### 1. SSH & Firewall
 
----
-
-## Project Folder Structure
-
--cloud-linux-monitor/
-  -agent/
-    -agent.py
-    -agent.service
-  -stress/
-    -stress.sh
-  -dashboard/
-    -dashboard.py
-  -README.md
+- Generate your SSH key and copy it to the VM:
   
----
+      '''bash
+      ssh-keygen -t ed25519 -C "gcp-ssh"
+      ssh-copy-id -i ~/.ssh/your_key.pub humerthingy@<EXTERNAL_IP>
+      
+-Create a secure tunnel to access the dashboard:
 
-## How to Use It
+    bash
+    Copy code
+    ssh -i ~/.ssh/your_key -L 8050:localhost:8050 humerthingy@<EXTERNAL_IP>
+    (Optional) Enable UFW:
 
-### Start the monitoring agent:
-sudo systemctl start agent.service
+    bash
+    Copy code
+    sudo ufw allow OpenSSH
+    sudo ufw allow 8050
+    sudo ufw enable
+    
+###2. Install Requirements
 
-### Check that agent is running
-sudo systemctl status agent.service
+    bash
+    Copy code
+    sudo apt update
+    sudo apt install python3 python3-pip stress-ng
+    pip3 install dash plotly psutil
+    
+###3. Start the Agent
 
-### View live system metrics from pipe
-cat /tmp/sysmetrics.pipe
+-Run the Python agent to continuously write metrics:
 
-### Start stress generator 
-sudo systemctl start stress.service
+    bash
+    Copy code
+    python3 agent/agent.py
+    4. Run the Dashboard
+    In a separate terminal:
 
-### Check if stress script is running
-sudo systemctl status stress.service
+    bash
+    Copy code
+    python3 dashboard/dashboard.py
+    Then open http://localhost:8050 in your browser.
 
-### Run dashboard
+###5. Use the Stress Generator
 
+-Enable the systemd service to simulate stress:
 
----
-
-## Notes
-7/16/2025 
-    The backend is complete and working, working on web-based GUI for monitoring functionalilty (currently have the code working, working on web-based format)
+    bash
+    Copy code
+    sudo cp stress/stress.service /etc/systemd/system/
+    sudo systemctl daemon-reexec
+    sudo systemctl daemon-reload
+    sudo systemctl enable stress.service
+    sudo systemctl start stress.service
+    To check status:
+    
+    bash
+    Copy code
+    sudo systemctl status stress.service
+    
+###Notes
+   
+    The agent and dashboard communicate via a named pipe: /tmp/sysmetrics.pipe
+    
+    Threshold sliders let you fine-tune alert levels in real-time
+    
+    All changes are live; no need to restart dashboard after modifying sliders
